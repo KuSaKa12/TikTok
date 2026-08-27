@@ -152,7 +152,6 @@ async def handle_tiktok_link(message: Message, bot: Bot):
                         candidate = candidates[0]
                 if candidate.exists():
                     file_path = candidate
-                    caption = (info.get("description") or "")[:1000]
                     downloaded = True
         except Exception as e:
             logging.warning(f"yt-dlp не смог скачать напрямую ({e}), пробую резервный способ через tikwm.com...")
@@ -161,7 +160,6 @@ async def handle_tiktok_link(message: Message, bot: Bot):
         if not downloaded:
             try:
                 title = await download_via_tikwm(url, file_path)
-                caption = title[:1000] if title else ""
                 downloaded = True
             except Exception as e2:
                 logging.error(f"Резервный способ скачивания тоже не сработал: {e2}")
@@ -187,7 +185,6 @@ async def handle_tiktok_link(message: Message, bot: Bot):
             await bot.send_video(
                 chat_id=CHANNEL_ID,
                 video=FSInputFile(file_path),
-                caption=caption,
             )
         except Exception as e:
             logging.error(f"Ошибка отправки в канал: {e}")
